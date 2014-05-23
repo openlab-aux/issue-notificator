@@ -13,7 +13,7 @@ REPO = "orgafoo"
 NO_ISSUES = 10
 ALT_ISSUE_URL = "https://issues.openlab-augsburg.de" # NULL if none
 LIST_ADDRESS = "alle@lists.openlab-augsburg.de"
-FROM_ADDRESS = "FILLME"
+FROM_ADDRESS = "noreply@openlab-augsburg.de"
 SUBJECT = "Die neuesten Openlab Issues für dich"
 
 # Constants
@@ -87,6 +87,7 @@ def send_mail_to_list(payload, subject, list_address, from_address):
     mes["From"] = from_address
     mes["To"] = list_address
     mes["Subject"] = subject
+    mes["Content-Type"] = "text/plain; charset=UTF-8"
     mes.set_payload(payload)
 
     try:
