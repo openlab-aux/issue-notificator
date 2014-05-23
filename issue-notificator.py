@@ -13,7 +13,7 @@ REPO = "orgafoo"
 NO_ISSUES = 10
 ALT_ISSUE_URL = "https://issues.openlab-augsburg.de" # NULL if none
 LIST_ADDRESS = "alle@lists.openlab-augsburg.de"
-FROM_ADDRESS = "mail@profpatsch.de"
+FROM_ADDRESS = "FILLME"
 SUBJECT = "Die neuesten Openlab Issues für dich"
 
 # Constants
