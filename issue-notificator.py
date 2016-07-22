@@ -19,6 +19,7 @@ import subprocess as sub
 import sys
 import urllib.request as url
 import urllib.error as urlerr
+import smtplib
 
 # Config
 ORG = "openlab-aux"
@@ -26,7 +27,9 @@ REPO = "orgafoo"
 NO_ISSUES = 10
 ALT_ISSUE_URL = "https://issues.openlab-augsburg.de" # NULL if none
 LIST_ADDRESS = "alle@lists.openlab-augsburg.de"
-FROM_ADDRESS = "noreply@openlab-augsburg.de"
+FROM_ADDRESS = "tasks@openlab-augsburg.de"
+HOST = ""
+PASSWORD = ""
 SUBJECT = "Die neuesten Openlab Issues für dich"
 
 # Constants
@@ -95,7 +98,7 @@ def error(message):
     print("ERROR: " + message)
     
 def send_mail_to_list(payload, subject, list_address, from_address):
-    """Uses sendmail to get it out."""
+    """Uses <s>sendmail</s>smtp to get it out."""
     mes = mail.Message()
     mes["From"] = from_address
     mes["To"] = list_address
@@ -103,18 +106,20 @@ def send_mail_to_list(payload, subject, list_address, from_address):
     mes["Content-Type"] = "text/plain; charset=UTF-8"
     mes.set_payload(payload)
 
-    try:
-        with sub.Popen(["sendmail", "-t"], stdin=sub.PIPE, stderr=sub.PIPE) as send:
-            _, errs = send.communicate(mes.as_string().encode())
-            if send.poll() != 0:
-                error("Sendmail failed with the following message:")
-                sys.stderr.write(errs.decode())
-                sys.exit()
-            
-    except FileNotFoundError:
-        error("The sendmail program cannot be found.")
-        sys.exit()
+    # try:
+    #     with sub.Popen(["sendmail", "-t"], stdin=sub.PIPE, stderr=sub.PIPE) as send:
+    #         _, errs = send.communicate(mes.as_string().encode())
+    #         if send.poll() != 0:
+    #             error("Sendmail failed with the following message:")
+    #             sys.stderr.write(errs.decode())
+    #             sys.exit()
+    # except FileNotFoundError:
+    #     error("The sendmail program cannot be found.")
+    #     sys.exit()
 
+    with smtplib.SMTP_SSL(host=HOST, context=ssl.create_default_context()) as server:
+        server.login(USERNAME, PASSWORD)
+        server.send_message(mes, from_addr=FROM_ADDRESS, to_addr=LIST_ADDRESS)
 
 if __name__ == '__main__':
     issues = grab_issues(ORG, REPO)
